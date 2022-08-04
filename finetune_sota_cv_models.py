@@ -15,7 +15,7 @@ import random
 import json
 print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
-os.environ['CUDA_VISIBLE_DEVICES'] = "3"
+# os.environ['CUDA_VISIBLE_DEVICES'] = "3"
 
 def set_seed(seed=2022, loader=None):
     torch.backends.cudnn.deterministic = True
@@ -46,7 +46,7 @@ Models to choose from [resnet, resnet101, efficientnet_b5, efficientnet_b7, effi
 convnext_base, vit_b_16, swin_b,
 alexnet, vgg, squeezenet, densenet, inception]
 '''
-model_name = "vit_b_16"
+model_name = "efficientnet_v2_m"
 
 # Number of classes in the dataset
 num_classes = 75
@@ -55,7 +55,7 @@ num_classes = 75
 batch_size = 32
 
 # Number of epochs to train for 
-num_epochs = 500
+num_epochs = 200
 
 # Flag for feature extracting. When False, we finetune the whole model, 
 #   when True we only update the reshaped layer params
@@ -133,6 +133,7 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+                torch.save(model, f"{model_name}_feature_extract_{feature_extract}.pt")
             if phase == 'val':
                 val_acc_history.append(epoch_acc.item())
 
