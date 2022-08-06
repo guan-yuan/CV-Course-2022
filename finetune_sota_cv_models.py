@@ -45,9 +45,9 @@ parser = ArgumentParser()
 parser.add_argument('--num_classes', type=int, default=75,
                     help="the num of classes for classification")
 parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
-parser.add_argument('--model_name', type=str, default='resnet', choices=['resnet', 'resnet101', 
-'efficientnet_b5', 'efficientnet_b7', 'efficientnet_v2_m', 
-'convnext_base', 'vit_b_16', 'swin_b', 
+parser.add_argument('--model_name', type=str, default='efficientnet_v2_s', choices=['resnet', 'resnet101', 
+'efficientnet_b3', 'efficientnet_b5', 'efficientnet_v2_s', 'efficientnet_v2_m', 
+'convnext_small', 'convnext_base', 'vit_b_16', 'swin_b', 
 'alexnet', 'vgg', 'inception'], help='')
 parser.add_argument('--batch_size', type=int, default=32, help="")
 parser.add_argument('--num_epochs', type=int, default=50, help="")
@@ -58,11 +58,6 @@ parser = parser.parse_args()
 
 data_dir = parser.data_dir
 
-'''
-Models to choose from [resnet, resnet101, efficientnet_b5, efficientnet_b7, efficientnet_v2_m, 
-convnext_base, vit_b_16, swin_b, 
-alexnet, vgg, inception]
-'''
 model_name = parser.model_name
 
 # Number of classes in the dataset
@@ -253,14 +248,27 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         )
         input_size = 224
 
-    elif model_name == "efficientnet_b7":
-        """ efficientnet_b7
+    elif model_name == "efficientnet_b3":
+        """ efficientnet_b3
         """
-        model_ft = models.efficientnet_b7(pretrained=use_pretrained)
+        model_ft = models.efficientnet_b3(pretrained=use_pretrained)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
             nn.Dropout(p=0.4, inplace=True),
             nn.Linear(2560, num_classes),
+        )
+        input_size = 224
+
+    elif model_name == "efficientnet_v2_s":
+        """ efficientnet_v2_s
+        """
+        model_ft = models.efficientnet_v2_s(weights='IMAGENET1K_V1')
+        print(model_ft)
+        exit()
+        set_parameter_requires_grad(model_ft, feature_extract)
+        model_ft.classifier = nn.Sequential(
+            nn.Dropout(p=0.3, inplace=True),
+            nn.Linear(1280, num_classes),
         )
         input_size = 224
 
