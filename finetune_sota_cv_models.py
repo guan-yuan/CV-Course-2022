@@ -45,7 +45,7 @@ parser = ArgumentParser()
 parser.add_argument('--num_classes', type=int, default=75,
                     help="the num of classes for classification")
 parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
-parser.add_argument('--model_name', type=str, default='vit_b_16', choices=['resnet',  
+parser.add_argument('--model_name', type=str, default='convnext_small', choices=['resnet',  
 'efficientnet_b3', 'efficientnet_v2_s', 
 'convnext_small', 'vit_b_16', 'swin_s', 
 'alexnet', 'vgg', 'inception'], help='')
@@ -266,16 +266,16 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         """ swin_s
         """
         model_ft = models.swin_s(weights='IMAGENET1K_V1')
-        print(model_ft)
-        exit()
         set_parameter_requires_grad(model_ft, feature_extract)
-        model_ft.head = nn.Linear(1024, num_classes, bias=True)
+        model_ft.head = nn.Linear(768, num_classes, bias=True)
         input_size = 238
 
     elif model_name == "convnext_small":
         """ convnext_small
         """
         model_ft = models.convnext_small(weights='IMAGENET1K_V1')
+        print(model_ft)
+        exit()
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
             LayerNorm2d((1024,), eps=1e-06, elementwise_affine=True),
