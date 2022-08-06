@@ -50,9 +50,8 @@ parser.add_argument('--model_name', type=str, default='vit_b_16', choices=['resn
 'convnext_base', 'vit_b_16', 'swin_b', 
 'alexnet', 'vgg', 'inception'], help='')
 parser.add_argument('--batch_size', type=int, default=32, help="")
-parser.add_argument('--max_len', type=int, default=512, help="")
 parser.add_argument('--num_epochs', type=int, default=50, help="")
-parser.add_argument('--lr', type=float, default=2e-5, help="")
+parser.add_argument('--feature_extract', type=bool, default=False, help="")
 
 parser = parser.parse_args()
 
@@ -76,7 +75,7 @@ num_epochs = parser.num_epochs
 
 # Flag for feature extracting. When False, we finetune the whole model, 
 #   when True we only update the reshaped layer params
-feature_extract = False
+feature_extract = parser.feature_extract
 
 
 ##### define training #####
