@@ -131,7 +131,7 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
                     _, preds = torch.max(outputs, 1)
 
                     # backward + optimize only if in training phase
-                    if phase == 'train' and (((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(data_loader))):
+                    if phase == 'train' and (((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(dataloaders[phase]))):
                         optimizer.step()
                         optimizer.zero_grad()
 
