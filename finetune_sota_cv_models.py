@@ -45,9 +45,9 @@ parser = ArgumentParser()
 parser.add_argument('--num_classes', type=int, default=75,
                     help="the num of classes for classification")
 parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
-parser.add_argument('--model_name', type=str, default='efficientnet_v2_s', choices=['resnet', 'resnet101', 
-'efficientnet_b3', 'efficientnet_b5', 'efficientnet_v2_s', 'efficientnet_v2_m', 
-'convnext_small', 'convnext_base', 'vit_b_16', 'swin_b', 
+parser.add_argument('--model_name', type=str, default='swin_s', choices=['resnet',  
+'efficientnet_b3', 'efficientnet_v2_s', 
+'convnext_small', 'vit_b_16', 'swin_s', 
 'alexnet', 'vgg', 'inception'], help='')
 parser.add_argument('--batch_size', type=int, default=32, help="")
 parser.add_argument('--num_epochs', type=int, default=50, help="")
@@ -228,26 +228,6 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         model_ft.fc = nn.Linear(num_ftrs, num_classes)
         input_size = 224
 
-    elif model_name == "resnet101":
-        """ Resnet101
-        """
-        model_ft = models.resnet101(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, num_classes)
-        input_size = 224
-    
-    elif model_name == "efficientnet_b5":
-        """ efficientnet_b5
-        """
-        model_ft = models.efficientnet_b5(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        model_ft.classifier = nn.Sequential(
-            nn.Dropout(p=0.4, inplace=True),
-            nn.Linear(2048, num_classes),
-        )
-        input_size = 224
-
     elif model_name == "efficientnet_b3":
         """ efficientnet_b3
         """
@@ -272,17 +252,6 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         )
         input_size = 224
 
-    elif model_name == "efficientnet_v2_m":
-        """ efficientnet_v2_m
-        """
-        model_ft = models.efficientnet_v2_m(weights='IMAGENET1K_V1')
-        set_parameter_requires_grad(model_ft, feature_extract)
-        model_ft.classifier = nn.Sequential(
-            nn.Dropout(p=0.3, inplace=True),
-            nn.Linear(1280, num_classes),
-        )
-        input_size = 224
-
     elif model_name == "vit_b_16":
         """ vit_b_16
         """
@@ -293,18 +262,20 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         model_ft.heads = nn.Linear(768, num_classes, bias=True)
         input_size = 224
 
-    elif model_name == "swin_b":
-        """ swin_b
+    elif model_name == "swin_s":
+        """ swin_s
         """
-        model_ft = models.swin_b(weights='IMAGENET1K_V1')
+        model_ft = models.swin_s(weights='IMAGENET1K_V1')
+        print(model_ft)
+        exit()
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.head = nn.Linear(1024, num_classes, bias=True)
         input_size = 238
 
-    elif model_name == "convnext_base":
-        """ convnext_base
+    elif model_name == "convnext_small":
+        """ convnext_small
         """
-        model_ft = models.convnext_base(weights='IMAGENET1K_V1')
+        model_ft = models.convnext_small(weights='IMAGENET1K_V1')
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
             LayerNorm2d((1024,), eps=1e-06, elementwise_affine=True),
@@ -329,24 +300,6 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.classifier[6].in_features
         model_ft.classifier[6] = nn.Linear(num_ftrs,num_classes)
-        input_size = 224
-
-    elif model_name == "squeezenet":
-        """ Squeezenet
-        """
-        model_ft = models.squeezenet1_0(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        model_ft.classifier[1] = nn.Conv2d(512, num_classes, kernel_size=(1,1), stride=(1,1))
-        model_ft.num_classes = num_classes
-        input_size = 224
-
-    elif model_name == "densenet":
-        """ Densenet
-        """
-        model_ft = models.densenet121(pretrained=use_pretrained)
-        set_parameter_requires_grad(model_ft, feature_extract)
-        num_ftrs = model_ft.classifier.in_features
-        model_ft.classifier = nn.Linear(num_ftrs, num_classes)
         input_size = 224
 
     elif model_name == "inception":
