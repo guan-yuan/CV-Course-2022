@@ -262,12 +262,12 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
     elif model_name == "efficientnet_v2_s":
         """ efficientnet_v2_s
         """
-        model_ft = models.efficientnet_v2_s(weights='IMAGENET1K_V1')
-        print(model_ft)
-        exit()
+        model_ft = models.efficientnet_v2_s(weights=None)
+        checkpoint = torch.load("weights/efficientnet_v2_s-dd5fe13b.pth")
+        model_ft.load_state_dict(checkpoint)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
-            nn.Dropout(p=0.3, inplace=True),
+            nn.Dropout(p=0.2, inplace=True),
             nn.Linear(1280, num_classes),
         )
         input_size = 224
