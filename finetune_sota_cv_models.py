@@ -45,13 +45,13 @@ parser = ArgumentParser()
 parser.add_argument('--num_classes', type=int, default=75,
                     help="the num of classes for classification")
 parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
-parser.add_argument('--model_name', type=str, default='vit_b_16', choices=['resnet', 'resnet101', 
+parser.add_argument('--model_name', type=str, default='resnet', choices=['resnet', 'resnet101', 
 'efficientnet_b5', 'efficientnet_b7', 'efficientnet_v2_m', 
 'convnext_base', 'vit_b_16', 'swin_b', 
 'alexnet', 'vgg', 'inception'], help='')
 parser.add_argument('--batch_size', type=int, default=32, help="")
 parser.add_argument('--num_epochs', type=int, default=50, help="")
-parser.add_argument('--accum_iter', type=int, default=128, help="")
+parser.add_argument('--accum_iter', type=int, default=16, help="")
 parser.add_argument('--feature_extract', type=bool, default=False, help="")
 
 parser = parser.parse_args()
@@ -278,7 +278,9 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
     elif model_name == "vit_b_16":
         """ vit_b_16
         """
-        model_ft = models.vit_b_16(weights='IMAGENET1K_V1')
+        model_ft = models.vit_b_16(weights=None)
+        checkpoint = torch.load("weights/vit_b_16-c867db91.pth")
+        model_ft.load_state_dict(checkpoint)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.heads = nn.Linear(768, num_classes, bias=True)
         input_size = 224
