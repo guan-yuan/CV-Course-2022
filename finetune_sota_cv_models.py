@@ -16,7 +16,7 @@ import json
 from argparse import ArgumentParser
 print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
-# os.environ['CUDA_VISIBLE_DEVICES'] = "3"
+# os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
 def set_seed(seed=2022, loader=None):
     torch.backends.cudnn.deterministic = True
@@ -51,6 +51,7 @@ parser.add_argument('--model_name', type=str, default='vit_b_16', choices=['resn
 'alexnet', 'vgg', 'inception'], help='')
 parser.add_argument('--batch_size', type=int, default=32, help="")
 parser.add_argument('--num_epochs', type=int, default=50, help="")
+parser.add_argument('--accum_iter', type=int, default=128, help="")
 parser.add_argument('--feature_extract', type=bool, default=False, help="")
 
 parser = parser.parse_args()
@@ -77,6 +78,8 @@ num_epochs = parser.num_epochs
 #   when True we only update the reshaped layer params
 feature_extract = parser.feature_extract
 
+accum_iter = parser.accum_iter
+
 
 ##### define training #####
 def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=25, is_inception=False):
@@ -102,13 +105,10 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
             running_corrects = 0
 
             # Iterate over data.
-            for inputs, labels in dataloaders[phase]:
+            for batch_idx, (inputs, labels) in enumerate(dataloaders[phase]):
                 inputs = inputs.to(device)
                 labels = labels.to(device)
-
-                # zero the parameter gradients
-                optimizer.zero_grad()
-
+                
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
@@ -125,13 +125,15 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
                     else:
                         outputs = model(inputs)
                         loss = criterion(outputs, labels)
+                        loss = loss / accum_iter
+                        loss.backward()
 
                     _, preds = torch.max(outputs, 1)
 
                     # backward + optimize only if in training phase
-                    if phase == 'train':
-                        loss.backward()
+                    if phase == 'train' and (((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(data_loader))):
                         optimizer.step()
+                        optimizer.zero_grad()
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
