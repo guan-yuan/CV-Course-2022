@@ -13,6 +13,7 @@ import os
 import copy
 import random
 import json
+from argparse import ArgumentParser
 print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
 # os.environ['CUDA_VISIBLE_DEVICES'] = "3"
@@ -39,23 +40,39 @@ Ref: https://pytorch.org/tutorials/beginner/finetuning_torchvision_models_tutori
 ##### parameter setting #####
 # Top level data directory. Here we assume the format of the directory conforms 
 #   to the ImageFolder structure
-data_dir = "./dataset/"
+parser = ArgumentParser()
+# Requirement
+parser.add_argument('--num_classes', type=int, default=75,
+                    help="the num of classes for classification")
+parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
+parser.add_argument('--model_name', type=str, default='vit_b_16', choices=['resnet', 'resnet101', 
+'efficientnet_b5', 'efficientnet_b7', 'efficientnet_v2_m', 
+'convnext_base', 'vit_b_16', 'swin_b', 
+'alexnet', 'vgg', 'inception'], help='')
+parser.add_argument('--batch_size', type=int, default=32, help="")
+parser.add_argument('--max_len', type=int, default=512, help="")
+parser.add_argument('--num_epochs', type=int, default=50, help="")
+parser.add_argument('--lr', type=float, default=2e-5, help="")
+
+parser = parser.parse_args()
+
+data_dir = parser.data_dir
 
 '''
 Models to choose from [resnet, resnet101, efficientnet_b5, efficientnet_b7, efficientnet_v2_m, 
-convnext_base, vit_b_16, swin_b,
-alexnet, vgg, squeezenet, densenet, inception]
+convnext_base, vit_b_16, swin_b, 
+alexnet, vgg, inception]
 '''
-model_name = "vit_b_16"
+model_name = parser.model_name
 
 # Number of classes in the dataset
-num_classes = 75
+num_classes = parser.num_classes
 
 # Batch size for training (change depending on how much memory you have)
-batch_size = 32
+batch_size = parser.batch_size
 
 # Number of epochs to train for 
-num_epochs = 50
+num_epochs = parser.num_epochs
 
 # Flag for feature extracting. When False, we finetune the whole model, 
 #   when True we only update the reshaped layer params
