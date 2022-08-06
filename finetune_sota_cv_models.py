@@ -46,7 +46,7 @@ Models to choose from [resnet, resnet101, efficientnet_b5, efficientnet_b7, effi
 convnext_base, vit_b_16, swin_b,
 alexnet, vgg, squeezenet, densenet, inception]
 '''
-model_name = "efficientnet_v2_m"
+model_name = "vit_b_16"
 
 # Number of classes in the dataset
 num_classes = 75
@@ -55,7 +55,7 @@ num_classes = 75
 batch_size = 32
 
 # Number of epochs to train for 
-num_epochs = 200
+num_epochs = 50
 
 # Flag for feature extracting. When False, we finetune the whole model, 
 #   when True we only update the reshaped layer params
