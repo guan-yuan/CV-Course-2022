@@ -116,7 +116,9 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
                         outputs, aux_outputs = model(inputs)
                         loss1 = criterion(outputs, labels)
                         loss2 = criterion(aux_outputs, labels)
-                        loss = loss1 + 0.4*loss2
+                        loss = loss1 + 0.4 * loss2
+                        loss = loss / accum_iter
+                        loss.backward()
                     else:
                         outputs = model(inputs)
                         loss = criterion(outputs, labels)
