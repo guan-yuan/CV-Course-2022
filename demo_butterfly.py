@@ -47,7 +47,7 @@ def getFrame(sec):
         cv2.imwrite("dataset/video_images/image"+str(count).zfill(3)+".jpg", image)     # save frame as JPG file
     return hasFrames
 sec = 0
-frameRate = 1/30 
+frameRate = 1/20
 count=1
 success = getFrame(sec)
 while success:
