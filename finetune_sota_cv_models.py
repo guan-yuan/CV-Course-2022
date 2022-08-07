@@ -233,13 +233,13 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
     elif model_name == "efficientnet_b3":
         """ efficientnet_b3
         """
-        model_ft = models.efficientnet_b3(pretrained=use_pretrained)
-        print(model_ft)
-        exit()
+        model_ft = models.efficientnet_b3(pretrained=None)
+        checkpoint = torch.load("weights/efficientnet_b3_rwightman-cf984f9c.pth")
+        model_ft.load_state_dict(checkpoint)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
-            nn.Dropout(p=0.4, inplace=True),
-            nn.Linear(2560, num_classes),
+            nn.Dropout(p=0.3, inplace=True),
+            nn.Linear(1536, num_classes, bias=True),
         )
         input_size = 224
 
