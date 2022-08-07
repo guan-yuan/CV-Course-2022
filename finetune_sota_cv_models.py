@@ -267,7 +267,9 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
     elif model_name == "swin_s":
         """ swin_s
         """
-        model_ft = models.swin_s(weights='IMAGENET1K_V1')
+        model_ft = models.swin_s(weights=None)
+        checkpoint = torch.load("weights/swin_s-5e29d889.pth")
+        model_ft.load_state_dict(checkpoint)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.head = nn.Linear(768, num_classes, bias=True)
         input_size = 238
