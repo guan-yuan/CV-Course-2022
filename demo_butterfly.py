@@ -15,6 +15,9 @@ import random
 import json
 from argparse import ArgumentParser
 from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+import matplotlib.font_manager as fm
 # print("PyTorch Version: ",torch.__version__)
 # print("Torchvision Version: ",torchvision.__version__)
 # os.environ['CUDA_VISIBLE_DEVICES'] = "0"
@@ -35,28 +38,30 @@ set_seed()
 # Detect if we have a GPU available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# # read a video frame by frame
-# vidcap = cv2.VideoCapture('dataset/pexels-anna-bondarenko-5757715.mp4')
-# def getFrame(sec):
-#     vidcap.set(cv2.CAP_PROP_POS_MSEC,sec*1000)
-#     hasFrames,image = vidcap.read()
-#     if hasFrames:
-#         cv2.imwrite("dataset/video_images/image"+str(count).zfill(3)+".jpg", image)     # save frame as JPG file
-#     return hasFrames
-# sec = 0
-# frameRate = 0.5 #//it will capture image in each 0.5 second
-# count=1
-# success = getFrame(sec)
-# while success:
-#     count = count + 1
-#     sec = sec + frameRate
-#     sec = round(sec, 2)
-#     success = getFrame(sec)
+# read a video frame by frame
+vidcap = cv2.VideoCapture('dataset/pexels-anna-bondarenko-5757715.mp4')
+def getFrame(sec):
+    vidcap.set(cv2.CAP_PROP_POS_MSEC,sec*1000)
+    hasFrames,image = vidcap.read()
+    if hasFrames:
+        cv2.imwrite("dataset/video_images/image"+str(count).zfill(3)+".jpg", image)     # save frame as JPG file
+    return hasFrames
+sec = 0
+frameRate = 1/30 
+count=1
+success = getFrame(sec)
+while success:
+    count = count + 1
+    sec = sec + frameRate
+    sec = round(sec, 2)
+    success = getFrame(sec)
 
+# parse the image list
 img_list = glob("dataset/video_images/*")
 img_list.sort()
 # print(img_list)
 
+# load model and define transforms
 model = torch.load("results/efficientnet_b3_feature_extract_False.pt").to(device)
 # print(model)
 
@@ -70,21 +75,51 @@ test_transforms = transforms.Compose([
     ])
 
 
+# define func to predict one image
 def predict_image(image):
     image_tensor = test_transforms(image) # torch.Size([3, 224, 224])
-    print(image_tensor.shape)
+    # print(image_tensor.shape)
     image_tensor = image_tensor.unsqueeze_(0) # torch.Size([1, 3, 224, 224])
-    print("="*10)
-    print(image_tensor.shape)
+    # print(image_tensor.shape)
     input = image_tensor
     input = input.to(device)
     output = model(input)
     index = output.data.cpu().numpy().argmax()
     return index
 
+# load class name
+with open("dataset/class_names.json") as f:
+    class_name = json.load(f)
+
+# predict
 for img in img_list:
+    copy_img = img
     img = Image.open(img).convert('RGB')
-    img.show()
-    print(type(img))
-    print(predict_image(img))
-    exit()
+    # img.show()
+    # print(type(img))
+    print(class_name[predict_image(img)])
+    img = Image.open(copy_img).convert('RGB')
+    I1 = ImageDraw.Draw(img)
+    fontsize = 100
+    font = ImageFont.truetype(fm.findfont(fm.FontProperties(family='DejaVu Sans')), fontsize)
+    I1.text((28, 36), class_name[predict_image(img)], font=font, fill=(255, 255, 255))
+    img.save(f"dataset/image2video/{copy_img.split(os.sep)[-1]}.jpg")
+
+
+
+# convert to mp4 file
+img_array = glob('dataset/image2video/*')
+img_array.sort()
+img_array_ = []
+for filename in img_array:
+    img = cv2.imread(filename)
+    height, width, layers = img.shape
+    size = (width, height)
+    img_array_.append(img)
+
+_fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+out = cv2.VideoWriter('dataset/demo.mp4', _fourcc, 20.0, size)
+ 
+for i in range(len(img_array_)):
+    out.write(img_array_[i])
+out.release()
