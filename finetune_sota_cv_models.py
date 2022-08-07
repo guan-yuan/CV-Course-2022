@@ -368,6 +368,10 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transf
 # Create training and validation dataloaders
 dataloaders_dict = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=4) for x in ['train', 'val', 'test']}
 
+class_names = image_datasets['train'].classes
+with open("dataset/class_names.json", "w") as f:
+    json.dump(class_names, f, ensure_ascii=False, indent=2)
+
 # Detect if we have a GPU available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
