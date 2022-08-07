@@ -45,7 +45,7 @@ parser = ArgumentParser()
 parser.add_argument('--num_classes', type=int, default=75,
                     help="the num of classes for classification")
 parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
-parser.add_argument('--model_name', type=str, default='vgg', choices=['resnet18',  
+parser.add_argument('--model_name', type=str, default='inception', choices=['resnet18',  
 'efficientnet_b3', 'efficientnet_v2_s', 
 'convnext_small', 'vit_b_16', 'swin_s', 
 'alexnet', 'vgg', 'inception'], help='')
