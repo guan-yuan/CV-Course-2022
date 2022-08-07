@@ -273,14 +273,14 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
     elif model_name == "convnext_small":
         """ convnext_small
         """
-        model_ft = models.convnext_small(weights='IMAGENET1K_V1')
-        print(model_ft)
-        exit()
+        model_ft = models.convnext_small(weights=None)
+        checkpoint = torch.load("weights/convnext_small-0c510722.pth")
+        model_ft.load_state_dict(checkpoint)
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
-            LayerNorm2d((1024,), eps=1e-06, elementwise_affine=True),
+            LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
             nn.Flatten(start_dim=1, end_dim=-1),
-            nn.Linear(1024, num_classes, bias=True),
+            nn.Linear(768, num_classes, bias=True),
         )
         input_size = 224
 
