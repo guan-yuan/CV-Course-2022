@@ -45,7 +45,7 @@ parser = ArgumentParser()
 parser.add_argument('--num_classes', type=int, default=75,
                     help="the num of classes for classification")
 parser.add_argument('--data_dir', type=str, default='./dataset/', help='')
-parser.add_argument('--model_name', type=str, default='convnext_small', choices=['resnet18',  
+parser.add_argument('--model_name', type=str, default='efficientnet_b3', choices=['resnet18',  
 'efficientnet_b3', 'efficientnet_v2_s', 
 'convnext_small', 'vit_b_16', 'swin_s', 
 'alexnet', 'vgg', 'inception'], help='')
@@ -234,6 +234,8 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
         """ efficientnet_b3
         """
         model_ft = models.efficientnet_b3(pretrained=use_pretrained)
+        print(model_ft)
+        exit()
         set_parameter_requires_grad(model_ft, feature_extract)
         model_ft.classifier = nn.Sequential(
             nn.Dropout(p=0.4, inplace=True),
