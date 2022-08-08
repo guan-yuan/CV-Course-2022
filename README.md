@@ -34,10 +34,10 @@ python finetune_sota_cv_models.py --model_name swin_s --batch_size 32 --accum_it
 | --num_epochs | **50** | int | 訓練的epoch數 |
 | --feature_extract | **False** | bool | 是否只把模型當特徵抽取之用。True: 除了分類層，模型其他部分不訓練; False: finetune整個模型 |
 
-## Demo展示
+## Demo展示 - Real-time Butterfly 影像辨識系統開發
 ```
 # 執行
-demo_butterfly.py
+python demo_butterfly.py
 ```
-
+會於'dataset\demo.mp4'路徑產生一mp4 demo影片。其他蝴蝶影片可參考至 https://www.pexels.com/search/videos/butterfly/ 下載並測試使用。
 
