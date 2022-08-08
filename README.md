@@ -41,3 +41,16 @@ python demo_butterfly.py
 ```
 會於'dataset\demo.mp4'路徑產生一mp4 demo影片。其他蝴蝶影片可參考至 https://www.pexels.com/search/videos/butterfly/ 下載並測試使用。
 
+## 模型Performance比較
+| **Model** | **Val Acc** | **Test Acc** | **Params** |  
+| ---- | --- | --- | --- |
+| AlexNet | 0.917 | 0.931 | 61.1M |
+| VGG11 | 0.96 | 0.923 | 132.9M |
+| Inception_V3 | 0.971 | 0.949 | 27.2M |
+| ResNet18 | 0.971 | 0.952 | **11.7M** |
+| EfficientNet_B3 | **0.976** | **0.971** | **12.2M** |
+| EfficientNet_V2_S | 0.971 | 0.952 | 21.5M |
+| ViT_B_16 | 0.739 | 0.717 | 86.6M |
+| Swin_B | 0.968 | 0.963 | 87.8M |
+| ConvNeXt_Small | 0.970 | 0.944 | 50.2M |
+
