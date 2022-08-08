@@ -30,7 +30,7 @@ python finetune_sota_cv_models.py --model_name swin_s --batch_size 32 --accum_it
 | --data_dir | **./dataset/** | str | 訓練/驗證/測試資料路徑 |
 | --model_name | **swin_s** | str | 指定所要使用的模型，目前支援以下模型 ['resnet18', 'efficientnet_b3', 'efficientnet_v2_s', 'convnext_small' 'vit_b_16', 'swin_s', 'alexnet', 'vgg', 'inception'] |
 | --batch_size | **32** | int | batch size |
-| --accum_iter | **16** | int | 梯度累加，實際理論的模型訓練batch size為batch_size*accum_iter, e.g. 32*16=512 |
+| --accum_iter | **16** | int | 梯度累加，理論的模型訓練batch size為batch_size x accum_iter, e.g. 32 x 16=512 |
 | --num_epochs | **50** | int | 訓練的epoch數 |
 | --feature_extract | **False** | bool | 是否只把模型當特徵抽取之用。True: 除了分類層，模型其他部分不訓練; False: finetune整個模型 |
 
