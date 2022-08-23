@@ -1,5 +1,5 @@
 # CV-Course-2022
-The Computer Vision Course 2022 for 關務署教育訓練 (AI 模型建模與調教課程)
+關務署教育訓練課程 - The SOTA Models for Computer Vision in 2022  
 
 ## 環境建立
 建議使用conda 進行環境的創建與套件安裝，方式如下:  
